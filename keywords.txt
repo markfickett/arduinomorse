@@ -1,0 +1,12 @@
+MorseSender	KEYWORD1
+LEDMorseSender	KEYWORD1
+SpeakerMorseSender	KEYWORD1
+
+setMessage	KEYWORD2
+setup	KEYWORD2
+sendBlocking	KEYWORD2
+startSending	KEYWORD2
+continueSending	KEYWORD2
+new	KEYWORD2
+delete	KEYWORD2
+
