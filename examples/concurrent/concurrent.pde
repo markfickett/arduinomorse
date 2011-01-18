@@ -19,7 +19,7 @@ MorseSender *cqSender, *callsignSender;
 void setup()
 {
 	readySender.setup();
-	readySender.setMessage(String("kn "));
+	readySender.setMessage(String(PROSIGN_KN) + String(" "));
 
 	cqSender = new LEDMorseSender(PIN_STATUS);
 	cqSender->setup();

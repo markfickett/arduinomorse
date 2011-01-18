@@ -3,6 +3,9 @@
  * Generate and send Morse Code on an LED or a speaker. Allow sending
  * in a non-blocking manner (by calling a 'continue sending' method
  * every so often to turn an LED on/off, or to call tone/noTone appropriately).
+ *
+ * All input should be lowercase. Prosigns (SK, KN, etc) have special
+ * character values #defined.
  */
 
 // for malloc and free, for the new/delete operators
@@ -21,10 +24,25 @@ typedef int             morseTiming_t;
 #define END             0
 
 // the most timing numbers any unit will need; ex: k = on,off,on,off,on,end = 5
-#define MAX_TIMINGS     10
+#define MAX_TIMINGS     15
+
+// Punctuation and Prosigns
+#define PROSIGN_SK	'S'
+#define PROSIGN_KN	'K'
+typedef struct {
+	char c;
+	morseTiming_t timing[MAX_TIMINGS];
+} specialTiming;
+const specialTiming MORSE_PUNCT_ETC[] = {
+	{'.',		{DIT, DAH, DIT, DAH, DIT, DAH, END}},
+	{'?',		{DIT, DIT, DAH, DAH, DIT, DIT, END}},
+	{PROSIGN_SK,	{DIT, DIT, DIT, DAH, DIT, DAH, END}},
+	{PROSIGN_KN,	{DAH, DIT, DAH, DAH, DIT, END}},
+	{END,		{END}},
+};
 
 // Morse Code (explicit declaration of letter timings)
-const morseTiming_t MORSE[26][5] = {
+const morseTiming_t MORSE_LETTERS[26][5] = {
 	/* a */ {DIT, DAH, END},
 	/* b */ {DAH, DIT, DIT, DIT, END},
 	/* c */ {DAH, DIT, DAH, DIT, END},
@@ -81,13 +99,19 @@ private:
 
 	// when this timing unit was started
 	unsigned long lastChangedMillis;
-    
+
+	/**
+	 * Copy definition timings (on only) to raw timings (on/off).
+	 * @return the number of 'on' timings copied
+	 */
+	int copyTimings(morseTiming_t *rawOut, const morseTiming_t *definition);
+
 	/**
 	 * Fill a buffer with on,off,..,END timings (millis)
 	 * @return the index at which to start within the new timing sequence
 	 */
 	unsigned int fillTimings(char c);
-    
+
 public:
 	/**
 	 * Create a sender which will output to the given pin.

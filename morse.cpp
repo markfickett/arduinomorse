@@ -4,19 +4,26 @@
 
 
 // MorseSender
+int MorseSender::copyTimings(
+	morseTiming_t *rawOut,
+	const morseTiming_t *definition)
+{
+	int t = 0;
+	while(definition[t] != END)
+	{
+		rawOut[2*t] = definition[t];
+		rawOut[2*t + 1] = DIT;
+		t++;
+	}
+	return t;
+}
 unsigned int MorseSender::fillTimings(char c)
 {
 	int t = 0;
 	unsigned int start = 0;
 	if (c >= 'a' && c <= 'z')
 	{
-		const morseTiming_t *letterTimings = MORSE[c-'a'];
-		while(letterTimings[t] != END)
-		{
-			timingBuffer[2*t] = letterTimings[t];
-			timingBuffer[2*t + 1] = DIT;
-			t++;
-		}
+		t = copyTimings(timingBuffer, MORSE_LETTERS[c-'a']);
 	}
 	else if (c >= '0' && c <= '9')
 	{
@@ -35,7 +42,21 @@ unsigned int MorseSender::fillTimings(char c)
 	}
 	else
 	{
-		start = t = 1; // start on a space
+		int s = 0;
+		while(MORSE_PUNCT_ETC[s].c != END)
+		{
+			if(MORSE_PUNCT_ETC[s].c == c)
+			{
+				t = copyTimings(timingBuffer,
+					MORSE_PUNCT_ETC[s].timing);
+				break;
+			}
+			s++;
+		}
+		if (MORSE_PUNCT_ETC[s].c == END)
+		{
+			start = t = 1; // start on a space
+		}
 	}
 
 	timingBuffer[2*t - 1] = DAH;
