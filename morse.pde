@@ -2,6 +2,20 @@
  * Generate and send Morse Code on an LED or a speaker. Allow sending
  * in a non-blocking manner (by calling a 'continue sending' method every so often
  * to turn an LED on/off, or to call tone/noTone appropriately).
+ *
+ * Example:
+  LEDMorseSender cqSender(13);
+  void setup() {
+    cqSender.setup();
+    cqSender.setMessage(String("cq de kb3jcy "));
+  }
+  void loop() {
+    // check sensors, do some other work
+    if (!cqSender.continueSending()) // returns false initially or when done
+    {
+      cqSender.startSending(); // start the first time; restart after finishing
+    }
+  } 
  */
 
 #include <stdlib.h>
@@ -237,47 +251,3 @@ class LEDMorseSender: public MorseSender {
     LEDMorseSender(int outputPin) : MorseSender(outputPin) {};
 };
 
-
-/* Example: send blocking and non-blocking messages in Morse Code.
- */
-
-
-#define PIN_STATUS      13
-#define PIN_SPEAKER     2
-
-LEDMorseSender readySender(PIN_STATUS);
-MorseSender *callsignSenderPtr, *cqSenderPtr;
-
-void setup()
-{
-  callsignSenderPtr = new SpeakerMorseSender(PIN_SPEAKER);
-  callsignSenderPtr->setup();
-  callsignSenderPtr->setMessage(String("73 de kb3jcy  "));
-  
-  cqSenderPtr = new LEDMorseSender(PIN_STATUS);
-  cqSenderPtr->setup();
-  cqSenderPtr->setMessage("cq  ");
-  
-  //Serial.begin(28800);
-  
-  // Send KN blocking, on the status LED.
-  readySender.setup();
-  readySender.setMessage(String("kn "));
-  readySender.sendBlocking();
-}
-
-void loop()
-{
-  // Send a CQ (LED) and a 73 (speaker) simultaneously, to demonstrate
-  // the ability to send Morse Code while doing other computation.
-  
-  if (!callsignSenderPtr->continueSending())
-  {
-    callsignSenderPtr->startSending();
-  }
-
-  if (!cqSenderPtr->continueSending())
-  {
-    cqSenderPtr->startSending();
-  }
-}
