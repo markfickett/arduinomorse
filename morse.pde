@@ -182,6 +182,8 @@ class MorseSender {
      */
     boolean continueSending()
     {
+      if(messageIndex >= message.length()) { return false; }
+      
       unsigned long elapsedMillis = millis() - lastChangedMillis;
       if (elapsedMillis < timingBuffer[timingIndex]) { return true; }
 
@@ -223,7 +225,7 @@ class SpeakerMorseSender: public MorseSender {
   public:
     // concert A = 440
     // middle C = 261.626; higher octaves = 523.251, 1046.502
-    SpeakerMorseSender(int outputPin, unsigned int toneFrequency=440)
+    SpeakerMorseSender(int outputPin, unsigned int toneFrequency=1046)
       : MorseSender(outputPin), frequency(toneFrequency) {};
 };
 
@@ -262,9 +264,6 @@ void setup()
   readySender.setup();
   readySender.setMessage(String("kn "));
   readySender.sendBlocking();
-  
-  callsignSenderPtr->startSending();
-  cqSenderPtr->startSending();
 }
 
 void loop()
