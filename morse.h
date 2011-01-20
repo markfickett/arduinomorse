@@ -6,6 +6,15 @@
  *
  * All input should be lowercase. Prosigns (SK, KN, etc) have special
  * character values #defined.
+ *
+ * See also:
+ * Denser encoding scheme (binary with sentinel):
+ * http://blog.makezine.com/archive/2009/11/morse_code_beacon_using_arduino.html
+ * and http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1203966199
+ * Morse decoder (using binary tree):
+ * http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1289074596/15
+ * Generator (on playground):
+ * http://www.arduino.cc/playground/Code/Morse
  */
 
 // for malloc and free, for the new/delete operators
