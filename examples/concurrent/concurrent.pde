@@ -11,7 +11,7 @@
 #include <morse.h>
 
 #define PIN_STATUS	13
-#define PIN_SPEAKER	2
+#define PIN_SPEAKER	3
 
 LEDMorseSender readySender(PIN_STATUS);
 MorseSender *cqSender, *callsignSender;

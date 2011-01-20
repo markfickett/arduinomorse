@@ -20,10 +20,9 @@
 // Arduino language types
 #include "WProgram.h"
 
-// define lengths
-#define UNIT            100
-#define DIT             UNIT
-#define DAH             3*UNIT
+#define WPM_DEFAULT	12.0
+// PARIS WPM measurement: 50; CODEX WPM measurement: 60 (Wikipedia:Morse_code)
+#define DITS_PER_WORD	50
 
 // Bitmasks are 1 for dah and 0 for dit, in left-to-right order;
 //	the sequence proper begins after the first 1 (a sentinel).
@@ -99,6 +98,7 @@ protected:
 	virtual void setOff();
 
 private:
+	morseTiming_t DIT, DAH;
 	String message;
 
 	// on,off,...,wait,0 list, millis
@@ -129,12 +129,21 @@ public:
 	/**
 	 * Create a sender which will output to the given pin.
 	 */
-	MorseSender(unsigned int outputPin);
+	MorseSender(unsigned int outputPin, float wpm=WPM_DEFAULT);
 
 	/**
 	 * To be called during the Arduino setup(); set the pin as OUTPUT.
 	 */
 	void setup();
+
+	/**
+	 * Set the words per minute (based on PARIS timing).
+	 */
+	void setWPM(float wpm);
+	/**
+	 * Set the duration, in milliseconds, of a DIT.
+	 */
+	void setSpeed(morseTiming_t duration);
 
 	/**
 	 * Set the message to be sent.
@@ -156,7 +165,7 @@ public:
 	 * Switch outputs on and off (and refill the internal timing buffer)
 	 * as necessary to continue with the sending of the current message.
 	 * This should be called every few milliseconds (at a significantly
-	 * smaller interval than UNIT) to produce a legible fist.
+	 * smaller interval than a DIT) to produce a legible fist.
 	 *
 	 * @see startSending, which must be called first
 	 * @return false if sending is complete, otherwise true (keep sending)
@@ -177,7 +186,8 @@ class SpeakerMorseSender: public MorseSender {
   public:
     // concert A = 440
     // middle C = 261.626; higher octaves = 523.251, 1046.502
-    SpeakerMorseSender(int outputPin, unsigned int toneFrequency=1046);
+    SpeakerMorseSender(int outputPin, unsigned int toneFrequency=1046,
+	float wpm=WPM_DEFAULT);
 };
 
 
@@ -186,6 +196,6 @@ class LEDMorseSender: public MorseSender {
     virtual void setOn();
     virtual void setOff();
   public:
-    LEDMorseSender(int outputPin);
+    LEDMorseSender(int outputPin, float wpm=WPM_DEFAULT);
 };
 

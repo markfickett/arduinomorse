@@ -89,9 +89,24 @@ unsigned int MorseSender::fillTimings(char c)
 void MorseSender::setOn() {};
 void MorseSender::setOff() {};
     
-MorseSender::MorseSender(unsigned int outputPin): pin(outputPin) {}
+MorseSender::MorseSender(unsigned int outputPin, float wpm) :
+	pin(outputPin)
+{
+	setWPM(wpm);
+}
     
 void MorseSender::setup() { pinMode(pin, OUTPUT); }
+
+void MorseSender::setWPM(float wpm)
+{
+	setSpeed((morseTiming_t)(1000.0*60.0/(max(1.0, wpm)*DITS_PER_WORD)));
+}
+
+void MorseSender::setSpeed(morseTiming_t duration)
+{
+	DIT = max(1, duration);
+	DAH = 3*DIT;
+}
     
 void MorseSender::setMessage(const String newMessage)
 {
@@ -161,13 +176,14 @@ void MorseSender::operator delete(void* ptr) { if (ptr) free(ptr); }
 void SpeakerMorseSender::setOn() { tone(pin, frequency); }
 void SpeakerMorseSender::setOff() { noTone(pin); }
 SpeakerMorseSender::SpeakerMorseSender(
-	int outputPin, unsigned int toneFrequency)
-: MorseSender(outputPin), frequency(toneFrequency) {};
+	int outputPin, unsigned int toneFrequency, float wpm)
+: MorseSender(outputPin, wpm), frequency(toneFrequency) {};
 
 
 // LEDMorseSender
 
 void LEDMorseSender::setOn() { digitalWrite(pin, HIGH); }
 void LEDMorseSender::setOff() { digitalWrite(pin, LOW); }
-LEDMorseSender::LEDMorseSender(int outputPin) : MorseSender(outputPin) {};
+LEDMorseSender::LEDMorseSender(int outputPin, float wpm)
+	: MorseSender(outputPin, wpm) {};
 
