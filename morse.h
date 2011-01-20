@@ -8,9 +8,6 @@
  * character values #defined.
  *
  * See also:
- * Denser encoding scheme (binary with sentinel):
- * http://blog.makezine.com/archive/2009/11/morse_code_beacon_using_arduino.html
- * and http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1203966199
  * Morse decoder (using binary tree):
  * http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1289074596/15
  * Generator (on playground):
@@ -24,10 +21,16 @@
 #include "WProgram.h"
 
 // define lengths
-typedef int             morseTiming_t;
 #define UNIT            100
 #define DIT             UNIT
 #define DAH             3*UNIT
+
+// Bitmasks are 1 for dah and 0 for dit, in left-to-right order;
+//	the sequence proper begins after the first 1 (a sentinel).
+//	Credit for this scheme to Mark VandeWettering K6HX ( brainwagon.org ).
+typedef int             morseTiming_t;
+typedef unsigned char	morseBitmask_t; // see also MAX_TIMINGS
+#define MORSE_BITMASK_HIGH_BIT	B10000000
 
 // sentinel
 #define END             0
@@ -40,44 +43,44 @@ typedef int             morseTiming_t;
 #define PROSIGN_KN	'K'
 typedef struct {
 	char c;
-	morseTiming_t timing[MAX_TIMINGS];
+	morseBitmask_t timing;
 } specialTiming;
 const specialTiming MORSE_PUNCT_ETC[] = {
-	{'.',		{DIT, DAH, DIT, DAH, DIT, DAH, END}},
-	{'?',		{DIT, DIT, DAH, DAH, DIT, DIT, END}},
-	{PROSIGN_SK,	{DIT, DIT, DIT, DAH, DIT, DAH, END}},
-	{PROSIGN_KN,	{DAH, DIT, DAH, DAH, DIT, END}},
-	{END,		{END}},
+	{'.',		B1010101},
+	{'?',		B1001100},
+	{PROSIGN_SK,	B1000101},
+	{PROSIGN_KN,	B110110},
+	{END,		B1},
 };
 
 // Morse Code (explicit declaration of letter timings)
-const morseTiming_t MORSE_LETTERS[26][5] = {
-	/* a */ {DIT, DAH, END},
-	/* b */ {DAH, DIT, DIT, DIT, END},
-	/* c */ {DAH, DIT, DAH, DIT, END},
-	/* d */ {DAH, DIT, DIT, END},
-	/* e */ {DIT, END},
-	/* f */ {DIT, DIT, DAH, DIT, END},
-	/* g */ {DAH, DAH, DIT, END},
-	/* h */ {DIT, DIT, DIT, DIT, END},
-	/* i */ {DIT, DIT, END},
-	/* j */ {DIT, DAH, DAH, DAH, END},
-	/* k */ {DAH, DIT, DAH, END},
-	/* l */ {DIT, DAH, DIT, DIT, END},
-	/* m */ {DAH, DAH, END},
-	/* n */ {DAH, DIT, END},
-	/* o */ {DAH, DAH, DAH, END},
-	/* p */ {DIT, DAH, DAH, DIT, END},
-	/* q */ {DAH, DAH, DIT, DAH, END},
-	/* r */ {DIT, DAH, DIT, END},
-	/* s */ {DIT, DIT, DIT, END},
-	/* t */ {DAH, END},
-	/* u */ {DIT, DIT, DAH, END},
-	/* v */ {DIT, DIT, DIT, DAH},
-	/* w */ {DIT, DAH, DAH, END},
-	/* x */ {DAH, DIT, DIT, DAH, END},
-	/* y */ {DAH, DIT, DAH, DAH, END},
-	/* z */ {DAH, DAH, DIT, DIT, END},
+const morseBitmask_t MORSE_LETTERS[26] = {
+	/* a */ B101,
+	/* b */ B11000,
+	/* c */ B11010,
+	/* d */ B1100,
+	/* e */ B10,
+	/* f */ B10010,
+	/* g */ B1110,
+	/* h */ B10000,
+	/* i */ B100,
+	/* j */ B10111,
+	/* k */ B1101,
+	/* l */ B10100,
+	/* m */ B111,
+	/* n */ B110,
+	/* o */ B1111,
+	/* p */ B10110,
+	/* q */ B11101,
+	/* r */ B1010,
+	/* s */ B1000,
+	/* t */ B11,
+	/* u */ B1001,
+	/* v */ B10001,
+	/* w */ B1011,
+	/* x */ B11001,
+	/* y */ B11011,
+	/* z */ B11100,
 };
 
 
@@ -113,7 +116,8 @@ private:
 	 * Copy definition timings (on only) to raw timings (on/off).
 	 * @return the number of 'on' timings copied
 	 */
-	int copyTimings(morseTiming_t *rawOut, const morseTiming_t *definition);
+	int copyTimings(morseTiming_t *rawOut,
+		morseBitmask_t definition);
 
 	/**
 	 * Fill a buffer with on,off,..,END timings (millis)

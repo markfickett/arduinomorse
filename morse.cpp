@@ -6,12 +6,20 @@
 // MorseSender
 int MorseSender::copyTimings(
 	morseTiming_t *rawOut,
-	const morseTiming_t *definition)
+	morseBitmask_t definition)
 {
 	int t = 0;
-	while(definition[t] != END)
+	boolean foundSentinel = false;
+	for(morseBitmask_t mask = MORSE_BITMASK_HIGH_BIT;
+		mask > 0; mask = mask >> 1)
 	{
-		rawOut[2*t] = definition[t];
+		boolean isDah = (mask & definition) > 0;
+		if(!foundSentinel)
+		{
+			if (isDah) { foundSentinel = true; }
+			continue;
+		}
+		rawOut[2*t] = isDah ? DAH : DIT;
 		rawOut[2*t + 1] = DIT;
 		t++;
 	}
