@@ -30,50 +30,61 @@ img, a img {
 
 <h2>Example</h2>
 
-<p>The library includes several examples; here also is an example usage:</p>
+<p>The library includes several examples; or see below. Briefly:</p>
 
-<code><pre>// Morse will be sent on the built-in status LED on pin 13.
-\#define PIN_STATUS	13
-// For example, a switch might be connected to pin 12.
-\#define PIN_SENSOR	12
-
-<strong>\#include &lt;morse.h&gt;</strong>
-
-<strong>LEDMorseSender sender(PIN_STATUS);</strong>
-
-void setup()
-{
-	// Set the pin as OUTPUT.
-	<strong>sender.setup();</strong>
-	// Set the message to be sent. (This may be set again at any point, as
-	// may be speed (wpm) or, for SpeakerMorseSender, the tone frequency.)
-	<strong>sender.setMessage(String("</strong>73 de kb3jcy <strong>"));</strong>
-
-	// Other setup:
-	pinMode(PIN_SENSOR, INPUT);
-	digitalWrite(PIN_SENSOR, HIGH);
-}
-
-void loop()
-{
-	// Calling continueSending checks elapsed time and toggles the output
-	// accordingly. It returns false if the entire message has been sent,
-	// or if the sender is uninitialized.
-	if (!<strong>sender.continueSending()</strong>)
-	{
-		// Set the internal counters to the message's beginning.
-		// Here, this results in repeating the message indefinitely.
-		<strong>sender.startSending();</strong>
+	#define PIN_STATUS	13
+	LEDMorseSender sender(PIN_STATUS);
+	void setup() {
+		sender.setup();
+		sender.startSending();
+	}
+	void loop() {
+		sender.continueSending();
 	}
 
-	// Do arbitrary other work, so long as it takes significantly less time
-	// than sending a Morse element.
-	if (digitalRead(PIN_SENSOR) == LOW)
+<p>Or, in more detail:</p>
+
+	// Morse will be sent on the built-in status LED on pin 13.
+	#define PIN_STATUS	13
+	// For example, a switch might be connected to pin 12.
+	#define PIN_SENSOR	12
+	
+	#include <morse.h>
+	
+	LEDMorseSender sender(PIN_STATUS);
+	
+	void setup()
 	{
-		// ...
+		// Set the pin as OUTPUT.
+		sender.setup();
+		// Set the message to be sent. (This may be set again at any point, as
+		// may be speed (wpm) or, for SpeakerMorseSender, the tone frequency.)
+		sender.setMessage(String("73 de kb3jcy "));
+	
+		// Other setup:
+		pinMode(PIN_SENSOR, INPUT);
+		digitalWrite(PIN_SENSOR, HIGH);
 	}
-}
-</pre></code>
+	
+	void loop()
+	{
+		// Calling continueSending checks elapsed time and toggles the output
+		// accordingly. It returns false if the entire message has been sent,
+		// or if the sender is uninitialized.
+		if (!sender.continueSending())
+		{
+			// Set the internal counters to the message's beginning.
+			// Here, this results in repeating the message indefinitely.
+			sender.startSending();
+		}
+	
+		// Do arbitrary other work, so long as it takes significantly less time
+		// than sending a Morse element.
+		if (digitalRead(PIN_SENSOR) == LOW)
+		{
+			// ...
+		}
+	}
 
 <h2>Installation</h2>
 
