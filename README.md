@@ -36,6 +36,7 @@ img, a img {
 	LEDMorseSender sender(PIN_STATUS);
 	void setup() {
 		sender.setup();
+		sender.setMessage(String("73 de kb3jcy "));
 		sender.startSending();
 	}
 	void loop() {
