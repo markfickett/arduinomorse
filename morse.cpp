@@ -114,6 +114,11 @@ void MorseSender::setMessage(const String newMessage)
 
 	// Force startSending() before continueSending().
 	messageIndex = message.length();
+
+	// If a different message was in progress, make sure it stops cleanly.
+	if (timingIndex % 2 == 0) {
+		setOff();
+	}
 }
 
 void MorseSender::sendBlocking()
