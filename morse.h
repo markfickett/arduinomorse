@@ -18,7 +18,11 @@
 #include <stdlib.h>
 
 // Arduino language types
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
 #include "WProgram.h"
+#endif
 
 #define WPM_DEFAULT	12.0
 // PARIS WPM measurement: 50; CODEX WPM measurement: 60 (Wikipedia:Morse_code)
