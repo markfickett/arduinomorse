@@ -27,6 +27,8 @@
 #define WPM_DEFAULT	12.0
 // PARIS WPM measurement: 50; CODEX WPM measurement: 60 (Wikipedia:Morse_code)
 #define DITS_PER_WORD	50
+// If defined, plays a carrier instead of silence. See SpeakerMorseSender.
+//#define SPEAKER_MORSE_CARRIER
 
 // Bitmasks are 1 for dah and 0 for dit, in left-to-right order;
 //	the sequence proper begins after the first 1 (a sentinel).
@@ -181,25 +183,36 @@ public:
 };
 
 
+/**
+ * Adapt Morse sending to use the Arduino language tone() and noTone()
+ * functions, for use with a speaker.
+ *
+ * If SPEAKER_MORSE_CARRIER is defined, instead of calling noTone, call tone
+ * with a low frequency. This is useful ex. for maintaining radio links.
+ */
 class SpeakerMorseSender: public MorseSender {
-  private:
-    unsigned int frequency;
-  protected:
-    virtual void setOn();
-    virtual void setOff();
-  public:
-    // concert A = 440
-    // middle C = 261.626; higher octaves = 523.251, 1046.502
-    SpeakerMorseSender(int outputPin, unsigned int toneFrequency=1046,
-	float wpm=WPM_DEFAULT);
+	private:
+		unsigned int frequency;
+		unsigned int carrFrequency;
+	protected:
+		virtual void setOn();
+		virtual void setOff();
+	public:
+		// concert A = 440
+		// middle C = 261.626; higher octaves = 523.251, 1046.502
+		SpeakerMorseSender(
+			int outputPin,
+			unsigned int toneFrequency=1046,
+			unsigned int carrierFrequency=131,
+			float wpm=WPM_DEFAULT);
 };
 
 
 class LEDMorseSender: public MorseSender {
-  protected:
-    virtual void setOn();
-    virtual void setOff();
-  public:
-    LEDMorseSender(int outputPin, float wpm=WPM_DEFAULT);
+	protected:
+		virtual void setOn();
+		virtual void setOff();
+	public:
+		LEDMorseSender(int outputPin, float wpm=WPM_DEFAULT);
 };
 

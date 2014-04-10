@@ -88,13 +88,13 @@ unsigned int MorseSender::fillTimings(char c)
 // see note in header about pure-virtual-ness
 void MorseSender::setOn() {};
 void MorseSender::setOff() {};
-    
+
 MorseSender::MorseSender(unsigned int outputPin, float wpm) :
 	pin(outputPin)
 {
 	setWPM(wpm);
 }
-    
+
 void MorseSender::setup() { pinMode(pin, OUTPUT); }
 
 void MorseSender::setWPM(float wpm)
@@ -107,7 +107,7 @@ void MorseSender::setSpeed(morseTiming_t duration)
 	DIT = max(1, duration);
 	DAH = 3*DIT;
 }
-    
+
 void MorseSender::setMessage(const String newMessage)
 {
 	message = newMessage;
@@ -179,10 +179,21 @@ void MorseSender::operator delete(void* ptr) { if (ptr) free(ptr); }
 // SpeakerMorseSender
 
 void SpeakerMorseSender::setOn() { tone(pin, frequency); }
-void SpeakerMorseSender::setOff() { noTone(pin); }
+void SpeakerMorseSender::setOff() {
+#ifdef SPEAKER_MORSE_CARRIER
+	tone(pin, carrFrequency);
+#else
+	noTone(pin);
+#endif
+}
 SpeakerMorseSender::SpeakerMorseSender(
-	int outputPin, unsigned int toneFrequency, float wpm)
-: MorseSender(outputPin, wpm), frequency(toneFrequency) {};
+	int outputPin,
+	unsigned int toneFrequency,
+	unsigned int carrierFrequency,
+	float wpm)
+	: MorseSender(outputPin, wpm),
+	frequency(toneFrequency),
+	carrFrequency(carrierFrequency) {};
 
 
 // LEDMorseSender
