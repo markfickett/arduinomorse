@@ -1,26 +1,6 @@
-<style type="text/css">
-<!--
-.prosign {
-	text-decoration: overline;
-}
-[title] {
-	cursor: help;
-	border-bottom: 1px dotted black;
-}
-img, a img {
-	border: none;
-}
-\#license {
-	float: left;
-	margin-right: 1ex;
-}
--->
-</style>
-
 <h1>Morse Code Library for Arduino with Non-Blocking Sending</h1>
 
 <p>This is a library for generating and sending <a href="http://en.wikipedia.org/wiki/Morse_code">Morse code</a>; particularly, via <acronym>LED</acronym> or speaker. Among myriad such libraries, its key feature is allowing Morse to be sent without blocking other processes, such as monitoring sensors.</p>
-
 
 <h2>Authorship and License</h2>
 
