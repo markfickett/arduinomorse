@@ -70,17 +70,19 @@ unsigned int MorseSender::fillTimings(char c)
 	timingBuffer[2*t - 1] = DAH;
 	timingBuffer[2*t] = END;
 
-	//Serial.print("Refilled timing buffer for '");
-	//Serial.print(c);
-	//Serial.print("': ");
+	/*
+	Serial.print("Refilled timing buffer for '");
+	Serial.print(c);
+	Serial.print("': ");
 	int i = start;
 	while(timingBuffer[i] != END)
 	{
-		//Serial.print((int)timingBuffer[i]);
-		//Serial.print(", ");
+		Serial.print((int)timingBuffer[i]);
+		Serial.print(", ");
 		i++;
 	}
-	//Serial.println("END");
+	Serial.println("END");
+	*/
 
 	return start;
 }
@@ -88,6 +90,10 @@ unsigned int MorseSender::fillTimings(char c)
 // see note in header about pure-virtual-ness
 void MorseSender::setOn() {};
 void MorseSender::setOff() {};
+
+// noop defaults
+void MorseSender::setReady() {};
+void MorseSender::setComplete() {};
 
 MorseSender::MorseSender(unsigned int outputPin, float wpm) :
 	pin(outputPin)
@@ -134,12 +140,17 @@ void MorseSender::startSending()
 	messageIndex = 0;
 	if (message.length() == 0) { return; }
 	timingIndex = fillTimings(message[0]);
-	setOn();
+	setReady();
+	if (timingIndex % 2 == 0) {
+		setOn();
+		//Serial.print("Starting with on, duration=");
+	} else {
+		//Serial.print("Starting with off, duration=");
+	}
 	lastChangedMillis = millis();
-	//Serial.print("Starting with (on) ");
 	//Serial.println((int)timingBuffer[timingIndex]);
 }
-    
+
 boolean MorseSender::continueSending()
 {
 	if(messageIndex >= message.length()) { return false; }
@@ -153,9 +164,10 @@ boolean MorseSender::continueSending()
 		messageIndex++;
 		if(messageIndex >= message.length()) {
 			setOff();
+			setComplete();
 			return false;
 		}
-	timingIndex = fillTimings(message[messageIndex]);
+		timingIndex = fillTimings(message[messageIndex]);
 	}
 
 	lastChangedMillis += elapsedMillis;
@@ -180,12 +192,14 @@ void MorseSender::operator delete(void* ptr) { if (ptr) free(ptr); }
 
 void SpeakerMorseSender::setOn() { tone(pin, frequency); }
 void SpeakerMorseSender::setOff() {
-#ifdef SPEAKER_MORSE_CARRIER
-	tone(pin, carrFrequency);
-#else
-	noTone(pin);
-#endif
+	if (carrFrequency == CARRIER_FREQUENCY_NONE) {
+		noTone(pin);
+	} else {
+		tone(pin, carrFrequency);
+	}
 }
+void SpeakerMorseSender::setReady() { setOff(); }
+void SpeakerMorseSender::setComplete() { noTone(pin); }
 SpeakerMorseSender::SpeakerMorseSender(
 	int outputPin,
 	unsigned int toneFrequency,

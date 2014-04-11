@@ -27,8 +27,8 @@
 #define WPM_DEFAULT	12.0
 // PARIS WPM measurement: 50; CODEX WPM measurement: 60 (Wikipedia:Morse_code)
 #define DITS_PER_WORD	50
-// If defined, plays a carrier instead of silence. See SpeakerMorseSender.
-//#define SPEAKER_MORSE_CARRIER
+// Pass to SpeakerMorseSender as carrierFrequency to suppress the carrier.
+#define CARRIER_FREQUENCY_NONE	-1
 
 // Bitmasks are 1 for dah and 0 for dit, in left-to-right order;
 //	the sequence proper begins after the first 1 (a sentinel).
@@ -98,10 +98,22 @@ const morseBitmask_t MORSE_LETTERS[26] = {
 class MorseSender {
 protected:
 	const unsigned int pin;
-	// These would be pure virtual, but that has compiler issues.
+	// The setOn and setOff methods would be pure virtual,
+	// but that has compiler issues.
 	// See: http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1167672075 .
+
+	/**
+	 * Called to set put the output in 'on' state, during a dit or dah.
+	 */
 	virtual void setOn();
 	virtual void setOff();
+
+	/**
+	 * Called before sending a message. Used for example to enable a
+	 * carrier. (Noop in the base class.)
+	 */
+	virtual void setReady();
+	virtual void setComplete();
 
 private:
 	morseTiming_t DIT, DAH;
@@ -187,7 +199,7 @@ public:
  * Adapt Morse sending to use the Arduino language tone() and noTone()
  * functions, for use with a speaker.
  *
- * If SPEAKER_MORSE_CARRIER is defined, instead of calling noTone, call tone
+ * If a carrierFrequency is given, instead of calling noTone, call tone
  * with a low frequency. This is useful ex. for maintaining radio links.
  */
 class SpeakerMorseSender: public MorseSender {
@@ -197,13 +209,15 @@ class SpeakerMorseSender: public MorseSender {
 	protected:
 		virtual void setOn();
 		virtual void setOff();
+		virtual void setReady();
+		virtual void setComplete();
 	public:
 		// concert A = 440
 		// middle C = 261.626; higher octaves = 523.251, 1046.502
 		SpeakerMorseSender(
 			int outputPin,
 			unsigned int toneFrequency=1046,
-			unsigned int carrierFrequency=131,
+			unsigned int carrierFrequency=CARRIER_FREQUENCY_NONE,
 			float wpm=WPM_DEFAULT);
 };
 
