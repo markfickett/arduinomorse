@@ -217,3 +217,16 @@ void LEDMorseSender::setOff() { digitalWrite(pin, LOW); }
 LEDMorseSender::LEDMorseSender(int outputPin, float wpm)
 	: MorseSender(outputPin, wpm) {};
 
+
+// PWMMorseSender
+
+void PWMMorseSender::setOn() { analogWrite(pin, brightness); }
+void PWMMorseSender::setOff() { analogWrite(pin, 0); }
+void PWMMorseSender::setBrightness(byte bright) {
+	brightness = bright;
+}
+PWMMorseSender::PWMMorseSender(
+		int outputPin,
+		float wpm,
+		byte bright)
+	: MorseSender(outputPin, wpm), brightness(bright) {};

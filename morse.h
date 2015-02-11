@@ -224,11 +224,30 @@ class SpeakerMorseSender: public MorseSender {
 };
 
 
+/**
+ * Sends Morse on a digital output pin.
+ */
 class LEDMorseSender: public MorseSender {
 	protected:
 		virtual void setOn();
 		virtual void setOff();
 	public:
 		LEDMorseSender(int outputPin, float wpm=WPM_DEFAULT);
+};
+
+
+/**
+ * Sends Morse on an analog output pin (using PWM). The brightness value is
+ * between 0 and 255 and is passed directly to analogWrite.
+ */
+class PWMMorseSender: public MorseSender {
+	private:
+		byte brightness;
+	protected:
+		virtual void setOn();
+		virtual void setOff();
+	public:
+		PWMMorseSender(int outputPin, float wpm=WPM_DEFAULT, byte brightness=255);
+		void setBrightness(byte brightness);
 };
 
