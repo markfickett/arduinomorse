@@ -46,6 +46,7 @@ typedef unsigned char	morseBitmask_t; // see also MAX_TIMINGS
 // Punctuation and Prosigns
 #define PROSIGN_SK	'S'
 #define PROSIGN_KN	'K'
+#define PROSIGN_BT	'B'
 typedef struct {
 	char c;
 	morseBitmask_t timing;
@@ -55,6 +56,7 @@ const specialTiming MORSE_PUNCT_ETC[] = {
 	{'?',		B1001100},
 	{PROSIGN_SK,	B1000101},
 	{PROSIGN_KN,	B110110},
+	{PROSIGN_BT,	B110001},
 	{END,		B1},
 };
 
