@@ -160,6 +160,7 @@ public:
 	 * Set the words per minute (based on PARIS timing).
 	 */
 	void setWPM(float wpm);
+
 	/**
 	 * Set the duration, in milliseconds, of a DIT.
 	 */
@@ -172,12 +173,16 @@ public:
 	void setMessage(const String newMessage);
 
 	/**
-	 * Send the entirety of the current message before returning.
+	 * Send the entirety of the current message before returning. See the "simple"
+	 * example, which uses sendBlocking to send one message.
 	 */
 	void sendBlocking();
 
 	/**
-	 * Prepare to send and begin sending the current message.
+	 * Prepare to send and begin sending the current message. After calling this,
+	 * call continueSending repeatedly until it returns false to finish sending
+	 * the message. See the "speeds" example, which calls startSending and
+	 * continueSending on two different senders.
 	 */
 	void startSending();
 
