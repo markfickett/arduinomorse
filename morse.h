@@ -28,12 +28,12 @@
 // PARIS WPM measurement: 50; CODEX WPM measurement: 60 (Wikipedia:Morse_code)
 #define DITS_PER_WORD	50
 // Pass to SpeakerMorseSender as carrierFrequency to suppress the carrier.
-#define CARRIER_FREQUENCY_NONE	-1
+#define CARRIER_FREQUENCY_NONE	0
 
 // Bitmasks are 1 for dah and 0 for dit, in left-to-right order;
 //	the sequence proper begins after the first 1 (a sentinel).
 //	Credit for this scheme to Mark VandeWettering K6HX ( brainwagon.org ).
-typedef int             morseTiming_t;
+typedef unsigned int             morseTiming_t;
 typedef unsigned char	morseBitmask_t; // see also MAX_TIMINGS
 #define MORSE_BITMASK_HIGH_BIT	B10000000
 

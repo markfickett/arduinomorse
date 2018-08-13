@@ -105,12 +105,12 @@ void MorseSender::setup() { pinMode(pin, OUTPUT); }
 
 void MorseSender::setWPM(float wpm)
 {
-	setSpeed((morseTiming_t)(1000.0*60.0/(max(1.0, wpm)*DITS_PER_WORD)));
+	setSpeed((morseTiming_t)(1000.0*60.0/(max(1.0f, wpm)*DITS_PER_WORD)));
 }
 
 void MorseSender::setSpeed(morseTiming_t duration)
 {
-	DIT = max(1, duration);
+	DIT = max(duration, (morseTiming_t) 1);
 	DAH = 3*DIT;
 }
 
