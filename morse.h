@@ -233,11 +233,20 @@ class SpeakerMorseSender: public MorseSender {
  * Sends Morse on a digital output pin.
  */
 class LEDMorseSender: public MorseSender {
+	private:
+		bool activeLow;
 	protected:
 		virtual void setOn();
 		virtual void setOff();
 	public:
-		LEDMorseSender(int outputPin, float wpm=WPM_DEFAULT);
+		/**
+		 * Creates a LED Morse code sender with the given GPIO pin.  The optional
+		 * boolean activeLow indicates LED is ON with digital LOW value.
+		 * @param outputPin GPIO pin number
+		 * @param activeLow set to true to indicate the LED ON with digital LOW value.  default: false
+		 * @param wpm words per minute, default: WPM_DEFAULT
+		 */
+		LEDMorseSender(int outputPin, bool activeLow = false, float wpm=WPM_DEFAULT);
 };
 
 
