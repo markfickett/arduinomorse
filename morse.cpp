@@ -212,10 +212,10 @@ SpeakerMorseSender::SpeakerMorseSender(
 
 // LEDMorseSender
 
-void LEDMorseSender::setOn() { digitalWrite(pin, HIGH); }
-void LEDMorseSender::setOff() { digitalWrite(pin, LOW); }
-LEDMorseSender::LEDMorseSender(int outputPin, float wpm)
-	: MorseSender(outputPin, wpm) {};
+void LEDMorseSender::setOn() { digitalWrite(pin, activeLow ? LOW : HIGH); }
+void LEDMorseSender::setOff() { digitalWrite(pin, activeLow ? HIGH : LOW); }
+LEDMorseSender::LEDMorseSender(int outputPin, bool activeLow, float wpm)
+	: MorseSender(outputPin, wpm), activeLow(activeLow) {};
 
 
 // PWMMorseSender
