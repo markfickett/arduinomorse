@@ -216,7 +216,8 @@ void LEDMorseSender::setOn() { digitalWrite(pin, activeLow ? LOW : HIGH); }
 void LEDMorseSender::setOff() { digitalWrite(pin, activeLow ? HIGH : LOW); }
 LEDMorseSender::LEDMorseSender(int outputPin, bool activeLow, float wpm)
 	: MorseSender(outputPin, wpm), activeLow(activeLow) {};
-
+LEDMorseSender::LEDMorseSender(int outputPin, float wpm)
+	: MorseSender(outputPin, wpm), activeLow(false) {};
 
 // PWMMorseSender
 

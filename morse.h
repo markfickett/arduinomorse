@@ -247,6 +247,13 @@ class LEDMorseSender: public MorseSender {
 		 * @param wpm words per minute, default: WPM_DEFAULT
 		 */
 		LEDMorseSender(int outputPin, bool activeLow = false, float wpm=WPM_DEFAULT);
+
+		/**
+		 * Creates a LED Morse code sender with the given GPIO pin.  This constructor is for backward compability.
+		 * @param outputPin GPIO pin number
+		 * @param wpm words per minute
+		 */
+		LEDMorseSender(int outputPin, float wpm);
 };
 
 
