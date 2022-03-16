@@ -54,6 +54,7 @@ typedef struct {
 const specialTiming MORSE_PUNCT_ETC[] = {
 	{'.',		B1010101},
 	{'?',		B1001100},
+	{'/',		B110010},
 	{PROSIGN_SK,	B1000101},
 	{PROSIGN_KN,	B110110},
 	{PROSIGN_BT,	B110001},
